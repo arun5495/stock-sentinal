@@ -17,23 +17,48 @@ sentiment_summary = {}
 analyzed_data = None
 
 # --- Input field for stock ticker ---
-ticker = st.text_input("Enter Stock Ticker (e.g., TSLA, AAPL):")
+tickers = st.multiselect(
+    "Select Companies to Analyze:",
+    ["AAPL", "TSLA", "MSFT", "AMZN", "GOOGL", "NVDA", "META", "NFLX"],
+    default=["AAPL", "TSLA"]
+)
+
 
 # --- Main Logic ---
-if ticker:
-    with st.spinner("Fetching latest data..."):
-        try:
-            # Fetch stock and news data
-            stock_data = fetch_stock_data(ticker)
-            news_data = fetch_news_data(ticker, api_key)
+for ticker in tickers:
+    st.subheader(f"Results for {ticker}")
+    try:
+        stock_data = fetch_stock_data(ticker)
+        news_data = fetch_news_data(ticker, api_key)
 
-            if stock_data is not None and not stock_data.empty and news_data is not None and not news_data.empty:
-                analyzed_data, sentiment_summary = analyze_sentiment(news_data)
-            else:
-                st.warning("No data found for this ticker. Try a different one.")
+        if stock_data is not None and not stock_data.empty and news_data is not None and not news_data.empty:
+            analyzed_data, sentiment_summary = analyze_sentiment(news_data)
 
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+            # Chart Section
+            if "Date" in stock_data.columns and "Close" in stock_data.columns:
+                chart = px.line(
+                    stock_data, x="Date", y="Close",
+                    title=f"{ticker} - Stock Performance"
+                )
+                st.plotly_chart(chart, use_container_width=True)
+
+            # Sentiment Pie Chart
+            if sentiment_summary:
+                sentiment_fig = px.pie(
+                    names=list(sentiment_summary.keys()),
+                    values=list(sentiment_summary.values()),
+                    title=f"{ticker} - News Sentiment"
+                )
+                st.plotly_chart(sentiment_fig, use_container_width=True)
+
+            # Display News Data
+            st.dataframe(analyzed_data[["title", "source", "publishedAt", "sentiment"]])
+        else:
+            st.warning(f"No data found for {ticker}.")
+
+    except Exception as e:
+        st.error(f"Error for {ticker}: {e}")
+
 
 # --- Stock Chart Visualization ---
 if stock_data is not None and not stock_data.empty:
