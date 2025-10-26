@@ -115,7 +115,6 @@ def analyze_sentiment(df):
 tickers = st.multiselect(
     "Select Companies to Analyze:",
     ["AAPL", "TSLA", "MSFT", "AMZN", "GOOGL", "NVDA", "META", "NFLX"],
-    default=["AAPL", "TSLA"],
 )
 
 # ------------------------------------------------------------
