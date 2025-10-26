@@ -26,13 +26,13 @@ tickers = st.multiselect(
 
 # --- Main Logic ---
 for ticker in tickers:
-    st.subheader(f"Results for {ticker}")
-    try:
-        stock_data = fetch_stock_data(ticker)
-        news_data = fetch_news_data(ticker, api_key)
+    col_name = f"Close_{ticker}"
+    if col_name in stock_data.columns:
+        fig = px.line(stock_data, x="Date", y=col_name, title=f"{ticker} Closing Prices")
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning(f"No data for {ticker}.")
 
-        if stock_data is not None and not stock_data.empty and news_data is not None and not news_data.empty:
-            analyzed_data, sentiment_summary = analyze_sentiment(news_data)
 
             # Chart Section
             if "Date" in stock_data.columns and "Close" in stock_data.columns:
