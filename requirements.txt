@@ -1,8 +1,9 @@
-torch==2.5.0
-transformers==4.44.2
-accelerate
 streamlit
-plotly
-yfinance
-newsapi-python
 pandas
+requests
+yfinance
+transformers
+torch==2.5.1
+plotly
+vaderSentiment
+newsapi-python
