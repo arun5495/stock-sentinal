@@ -1,21 +1,17 @@
 import yfinance as yf
-from newsapi import NewsApiClient
 import pandas as pd
+import streamlit as st
 
-def fetch_stock_data(ticker):
-    data = yf.download(ticker, period="30d", interval="1d")
+@st.cache_data(ttl=1800)
+def fetch_stock_data(tickers):
+    data = yf.download(tickers, period="30d", interval="1d", group_by="ticker")
+
     data.reset_index(inplace=True)
-    return data
 
-def fetch_news_data(query, api_key):
-    newsapi = NewsApiClient(api_key=api_key)
-    articles = newsapi.get_everything(q=query, language='en', sort_by='publishedAt', page_size=20)
-    
-    news_df = pd.DataFrame([{
-        "title": a["title"],
-        "description": a["description"],
-        "publishedAt": a["publishedAt"],
-        "source": a["source"]["name"]
-    } for a in articles["articles"]])
-    
-    return news_df
+    # Flatten MultiIndex columns
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = [
+            f"{col[0]}_{col[1]}" if col[1] else col[0] for col in data.columns
+        ]
+
+    return data
