@@ -1,9 +1,7 @@
 streamlit
-pandas
-requests
-yfinance
-transformers
 torch==2.5.1
+transformers==4.44.2
+pandas
 plotly
-vaderSentiment
+yfinance
 newsapi-python
