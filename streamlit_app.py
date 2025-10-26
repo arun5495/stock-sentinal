@@ -66,7 +66,7 @@ if stock_data is not None and not stock_data.empty:
     if "Date" in stock_data.columns and "Close" in stock_data.columns:
         try:
             price_chart = px.line(
-                stock_data, x="Date", y="Close",
+                stock_data, y="Close",
                 title=f"{ticker.upper()} Closing Prices (Last 30 Days)"
             )
             st.plotly_chart(price_chart, use_container_width=True)
