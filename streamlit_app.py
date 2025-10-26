@@ -7,7 +7,7 @@ import os
 st.set_page_config(page_title="StockSentinel", layout="wide")
 st.title("📈 StockSentinel: AI-Powered Market Sentiment Analyzer")
 
-user_api_key = st.text_input("Enter your NewsAPI Key:")
+user_api_key = st.text_input("151eb78228084f2fb633e9aacb91ba96")
 ticker = st.text_input("Enter Stock Ticker (e.g., TSLA, AAPL):")
 
 if ticker and user_api_key:
@@ -26,3 +26,10 @@ if ticker and user_api_key:
     st.subheader("Stock Price Over Time")
     price_chart = px.line(stock_data, x='Date', y='Close', title=f'{ticker} Closing Prices (30 Days)')
     st.plotly_chart(price_chart)
+st.subheader("Stock Price Over Time")
+if 'Date' in stock_data.columns and 'Close' in stock_data.columns:
+    price_chart = px.line(stock_data, x='Date', y='Close',
+                          title=f'{ticker} Closing Prices (30 Days)')
+    st.plotly_chart(price_chart, use_container_width=True)
+else:
+    st.warning("Stock data not available or incorrectly formatted.")
