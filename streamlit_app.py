@@ -8,7 +8,7 @@ st.set_page_config(page_title="StockSentinel", layout="wide")
 st.title("📈 StockSentinel: AI-Powered Market Sentiment Analyzer")
 
 
-api_key = "151eb78228084f2fb633e9aacb91ba96" 
+api_key = "pub_efd381b771124f35b11659e17b32a84f" 
 
 
 stock_data = None
