@@ -4,7 +4,7 @@ import streamlit as st
 
 @st.cache_data(ttl=1800)
 def fetch_stock_data(tickers):
-    data = yf.download(tickers, period="30d", interval="1d", group_by="ticker")
+    data = yf.download(tickers, period="30d", interval="0d", group_by="ticker")
 
     data.reset_index(inplace=True)
 
