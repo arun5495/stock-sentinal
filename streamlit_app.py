@@ -5,21 +5,12 @@ import yfinance as yf
 from newsapi import NewsApiClient
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import torch
-
-# ------------------------------------------------------------
-# PAGE SETUP
-# ------------------------------------------------------------
 st.set_page_config(page_title="StockSentinel", layout="wide")
 st.title("📈 StockSentinel: AI-Powered Market Sentiment Analyzer")
 
-# ------------------------------------------------------------
-# YOUR NEWSAPI KEY
-# ------------------------------------------------------------
-API_KEY = "151eb78228084f2fb633e9aacb91ba96"  # Replace with your real key
 
-# ------------------------------------------------------------
-# CACHED FUNCTIONS
-# ------------------------------------------------------------
+API_KEY = "151eb78228084f2fb633e9aacb91ba96"  
+
 
 @st.cache_resource
 def load_finbert():
@@ -49,12 +40,12 @@ def fetch_stock_data(tickers):
         interval="1d",
         group_by="ticker",
         auto_adjust=True,
-        multi_level_index=False,  # ✅ Works for yfinance ≥ 0.2.51
+        multi_level_index=False, 
     )
 
     data.reset_index(inplace=True)
 
-    # Fallback flattening (for older yfinance)
+
     if isinstance(data.columns, pd.MultiIndex):
         if len(tickers) == 1:
             data.columns = data.columns.get_level_values(0)
@@ -109,17 +100,12 @@ def analyze_sentiment(df):
     return df, summary
 
 
-# ------------------------------------------------------------
-# MAIN INPUT AND UI
-# ------------------------------------------------------------
+
 tickers = st.multiselect(
     "Select Companies to Analyze:",
     ["AAPL", "TSLA", "MSFT", "AMZN", "GOOGL", "NVDA", "META", "NFLX",],
 )
 
-# ------------------------------------------------------------
-# PIPELINE EXECUTION
-# ------------------------------------------------------------
 if tickers:
     for ticker in tickers:
         st.header(f"Results for {ticker}")
@@ -128,7 +114,7 @@ if tickers:
             stock_data = fetch_stock_data(ticker)
             news_data = fetch_news(ticker)
 
-            # --- Validate Data ---
+          
             if stock_data.empty:
                 st.warning(f"No stock data found for {ticker}.")
                 continue
@@ -138,7 +124,7 @@ if tickers:
 
             analyzed_df, sentiment_summary = analyze_sentiment(news_data)
 
-            # --- STOCK CHART ---
+           
             close_col = f"Close_{ticker}" if f"Close_{ticker}" in stock_data.columns else "Close"
             if "Date" in stock_data.columns and close_col in stock_data.columns:
                 fig = px.line(
@@ -151,7 +137,7 @@ if tickers:
             else:
                 st.warning(f"‘Close’ column missing for {ticker}.")
 
-            # --- SENTIMENT PIE CHART ---
+           
             if sentiment_summary:
                 fig_pie = px.pie(
                     names=list(sentiment_summary.keys()),
@@ -160,7 +146,7 @@ if tickers:
                 )
                 st.plotly_chart(fig_pie, use_container_width=True)
 
-            # --- NEWS TABLE ---
+            
             st.subheader(f"Recent News Articles for {ticker}")
             st.dataframe(
                 analyzed_df[["title", "source", "publishedAt", "sentiment"]],
